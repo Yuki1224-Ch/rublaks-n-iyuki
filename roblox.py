@@ -165,7 +165,7 @@ class Roblox:
             open("output/valid_combo.txt", "a", encoding="utf-8").write(combo + "\n")
 
         if AUTO_SECURE:
-            new_pass = PREFIX + Util.random_string(10)
+            new_pass = PREFIX + random_string(10)
             Secure.change_password(self.session, self.account[1], new_pass)
 
         self._write_outputs(combo, acc_info, False, False)
