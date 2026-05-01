@@ -26,6 +26,7 @@ def get_token(session: requests.Session, metadata: str) -> str | None:
 def _solve_with_custom_solver(session: requests.Session, metadata: str) -> str | None:
     """
     Use our custom Playwright-based solver - 100% free, no APIs
+    Returns actual captcha token that can be used in the challenge
     """
     try:
         from json import loads
@@ -37,26 +38,26 @@ def _solve_with_custom_solver(session: requests.Session, metadata: str) -> str |
         # Extract proxy for browser
         proxy_dict = getattr(session, "proxy_dict", None)
         
-        print("[*] Using CUSTOM Captcha Solver (No API)")
+        print("[*] 🤖 Using CUSTOM Captcha Solver (No External API)")
         solver = CustomCaptchaSolver(debug=True)
         
         try:
             # Start browser with proxy support
             solver.start_browser(proxy=proxy_dict)
             
-            # Solve the captcha
-            success = solver.solve_funcaptcha(
+            # Solve the captcha and get token
+            result = solver.solve_with_token(
                 site_key="476068BF-9607-4799-B53D-966BE98E2B81",
-                service_url="https://www.roblox.com/login"
+                service_url="https://www.roblox.com/login",
+                blob=blob
             )
             
-            if success:
-                print("[+] Custom solver succeeded!")
-                # Note: Custom solver handles the challenge in-browser
-                # Return a placeholder token or handle session directly
-                return "CUSTOM_SOLVED"
+            if result and result.get("success"):
+                token = result.get("token")
+                print(f"[+] ✅ Custom solver succeeded! Token: {token[:30]}...")
+                return token
             else:
-                print("[-] Custom solver failed")
+                print("[-] ❌ Custom solver failed")
                 return None
                 
         finally:

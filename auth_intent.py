@@ -34,11 +34,11 @@ class AuthIntent:
     @staticmethod
     def get_auth_intent(session: requests.Session) -> dict | None:
         try:
-            # CRITICAL HEADERS
+            # CRITICAL HEADERS - Updated for 2025
             session.headers.update({
                 "Origin": "https://www.roblox.com",
                 "Referer": "https://www.roblox.com/login",
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
                 "Accept": "*/*",
                 "Accept-Language": "en-US,en;q=0.9",
                 "Accept-Encoding": "gzip, deflate, br",
@@ -46,6 +46,9 @@ class AuthIntent:
                 "Sec-Fetch-Dest": "empty",
                 "Sec-Fetch-Mode": "cors",
                 "Sec-Fetch-Site": "same-site",
+                "sec-ch-ua": '"Chromium";v="131", "Not_A Brand";v="24"',
+                "sec-ch-ua-mobile": "?0",
+                "sec-ch-ua-platform": '"Windows"',
             })
 
             # Generate key pair
@@ -53,15 +56,35 @@ class AuthIntent:
             client_public_key = AuthIntent.export_public_key_as_spki(public_key)
             client_epoch_timestamp = str(int(time() * 1000))  # Roblox uses milliseconds
 
-            # Get server nonce
+            # Get server nonce with retry logic
             url = "https://apis.roblox.com/hba-service/v1/getServerNonce"
-            resp = session.get(url, impersonate="chrome120", timeout=15)
-
+            
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    resp = session.get(url, impersonate="chrome124", timeout=10)
+                    
+                    if resp.status_code == 200:
+                        break
+                    
+                    # Wait before retry
+                    if attempt < max_retries - 1:
+                        import time as time_module
+                        time_module.sleep(1.5 * (attempt + 1))
+                        
+                except Exception as e:
+                    if attempt < max_retries - 1:
+                        import time as time_module
+                        time_module.sleep(1.5 * (attempt + 1))
+                    continue
+            
             if resp.status_code != 200:
+                print(f"[DEBUG] Failed to get nonce after {max_retries} attempts (status: {resp.status_code})")
                 return None
 
             server_nonce = resp.text.strip().strip('"')
             if not server_nonce or len(server_nonce) < 10:
+                print(f"[DEBUG] Invalid server nonce received: {server_nonce[:20] if server_nonce else 'None'}...")
                 return None
 
             # Construct payload and sign
@@ -77,4 +100,6 @@ class AuthIntent:
 
         except Exception as e:
             print(f"[DEBUG] AuthIntent failed: {e}")
+            import traceback
+            traceback.print_exc()
             return None

@@ -1,63 +1,18 @@
 {
-  "threads": 1,
-  "2captchaKey": "05fa43bbd3030a1d7137a149fdaf19d9",
-  "useKeyRotation": false,
-  "keyFile": "2captcha_keys.txt",
-  "logWebhook": true,
-  "webhooks": {
-    "default": "",
-    "old_accounts": "",
-    "locked_accounts": "",
-    "rap": "",
-    "rare_items": "",
-    "items": "",
-    "banned_accounts": "",
-    "robux": ""
-  },
-  "discordId": "",
-  "autoSecure": {
-    "password": {
-      "enabled": true,
-      "prefix": "phcoop_"
+    "threads": 5,
+    "useCustomSolver": true,
+    "2captchaKey": "",
+    "debug": false,
+    "skipCombos": {
+        "skip_invalid": true,
+        "skip_checked": true
     },
-    "underage": false
-  },
-  "skipCombos": {
-    "skip_invalid": true,
-    "skip_checked": true
-  },
-  "hideOutput": {
-    "enabled": true,
-    "email": {
-      "hide_invalid": true,
-      "hide_valid": false,
-      "hide_locked": true,
-      "hide_checked": true,
-      "hide_checking": true
+    "autoSecure": {
+        "password": {
+            "enabled": false,
+            "prefix": ""
+        }
     },
-    "username": {
-      "hide_invalid": true,
-      "hide_valid": false,
-      "hide_locked": true,
-      "hide_checked": true,
-      "hide_checking": true
-    }
-  },
-  "autoUnban": true,
-  "rareItems": [
-    48894692, 14463095, 16469427, 42070576, 181651981,
-    6340133, 11453609, 10907532, 10907531, 14405720,
-    10907534, 8330578, 10907546, 11123805, 181434601,
-    189963816, 6340269, 8330576, 6340141, 6340208,
-    6340192, 2845812591, 1158038, 124746102, 1029668,
-    1081381, 1163672
-  ],
-  "debug": false,
-  "proxyType": "http",
-  "useProxies": true,
-  "proxyTimeout": 8000,
-  "retryOnBan": true,
-  "solveCaptcha": true,
-  "humanize": true,
-  "delayRange": [3000, 7000]
+    "logWebhook": false,
+    "webhooks": {}
 }
