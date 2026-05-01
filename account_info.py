@@ -4,7 +4,8 @@ from util import get_config
 import requests
 
 config = get_config()
-rare_items = config["rareItems"]
+# Fix: Use .get() with default empty list to prevent KeyError
+rare_items = config.get("rareItems", [])
 
 def make_str(l):
     if l:
